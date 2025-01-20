@@ -6,8 +6,14 @@ import (
 )
 
 func main() {
-	err := server.Run()
+	s := server.NewServer()
+	if s == nil {
+		log.Fatal("Failed to create server")
+		return
+	}
+	err := s.Run()
 	if err != nil {
-		log.Fatalln("failed to start service due to error", err)
+		log.Fatalln("failed to start server due to error", err)
+		return
 	}
 }
