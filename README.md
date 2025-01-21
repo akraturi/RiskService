@@ -57,7 +57,7 @@ This starts the service on http://localhost:8080
 
 ### 5. Test the Service
 
-In Memory database is pre populating some sample risks
+In Memory database is pre populated with some sample risks
 
 ```bash
 curl http://localhost:8080/v1/risks
