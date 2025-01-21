@@ -12,14 +12,16 @@ type Server struct {
 	requestValidator *validator.Validate
 }
 
-func (s Server) Run() error {
+func (s *Server) Run() error {
 	configureLogging()
 
 	r := gin.Default()
 
 	s.configureRoutes(r)
 
-	r.Use(gin.Recovery())
+	r.Use(gin.RecoveryWithWriter(gin.DefaultWriter, func(c *gin.Context, err interface{}) {
+		log.Printf("Recovered from panic: %v", err)
+	}))
 
 	return r.Run()
 }

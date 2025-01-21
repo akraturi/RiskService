@@ -22,8 +22,8 @@ var validRiskStates = []string{StateOpen, StateClosed, StateAccepted, StateInves
 type Risk struct {
 	Id          uuid.UUID `json:"id,ommitempty"`
 	State       string    `json:"state" validate:"required,oneof=open closed accepted investigating"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
+	Title       string    `json:"title" validate:"required,max=255"`
+	Description string    `json:"description" validate:"required,max=1000"`
 }
 
 func RiskStateValidator(fl validator.FieldLevel) bool {
@@ -42,14 +42,15 @@ type RiskResponse struct {
 
 type ErrorResponse struct {
 	Message string `json:"message"`
+	Details string `json:"details"`
 }
 
-func (s Server) getRisks(c *gin.Context) {
+func (s *Server) getRisks(c *gin.Context) {
 	risks, err := s.database.GetRisks()
 	if err != nil {
 		fmt.Println("failed to get risks from db", err)
 		c.JSON(http.StatusInternalServerError,
-			ErrorResponse{"failed to get risks due to internal server error"})
+			ErrorResponse{"failed to get risks due to internal server error", err.Error()})
 		return
 	}
 
@@ -64,7 +65,7 @@ func (s Server) getRisks(c *gin.Context) {
 	}
 	if len(risksResponse) == 0 {
 		fmt.Println("no risks present in the db")
-		c.JSON(http.StatusNotFound, ErrorResponse{"no risks found"})
+		c.JSON(http.StatusNotFound, ErrorResponse{"no risks found", ""})
 		return
 	}
 
@@ -73,22 +74,22 @@ func (s Server) getRisks(c *gin.Context) {
 	})
 }
 
-func (s Server) addRisk(c *gin.Context) {
+func (s *Server) addRisk(c *gin.Context) {
 	var risk Risk
 
 	err := c.ShouldBindJSON(&risk)
 	if err != nil {
 		log.Println("risk with invalid state received to post", err)
 		c.JSON(http.StatusBadRequest,
-			ErrorResponse{"invalid risk received to post"})
+			ErrorResponse{"invalid risk received to post", err.Error()})
 		return
 	}
 
 	err = s.requestValidator.Struct(risk)
 	if err != nil {
-		log.Println("risk with invalid state received to post", err)
+		log.Println("failed to validate risk requested to add with error", err)
 		c.JSON(http.StatusBadRequest,
-			ErrorResponse{"risk with invalid state received to post"})
+			ErrorResponse{"invalid risk received to add", err.Error()})
 		return
 	}
 
@@ -96,7 +97,7 @@ func (s Server) addRisk(c *gin.Context) {
 	if err == nil {
 		log.Println("risk with id already exists", risk.Id)
 		c.JSON(http.StatusBadRequest,
-			ErrorResponse{"risk with supplied id is already present on the server"})
+			ErrorResponse{"risk with supplied id is already present on the server", ""})
 		return
 	}
 
@@ -107,9 +108,9 @@ func (s Server) addRisk(c *gin.Context) {
 	})
 
 	if err != nil {
-		fmt.Println("failed to add risk to db", err)
+		log.Println("failed to add risk to db", err)
 		c.JSON(http.StatusInternalServerError,
-			ErrorResponse{"failed to add risk due to a internal server error"})
+			ErrorResponse{"failed to add risk due to a internal server error", err.Error()})
 		return
 	}
 
@@ -126,20 +127,21 @@ func (s Server) addRisk(c *gin.Context) {
 		})
 }
 
-func (s Server) getRiskById(c *gin.Context) {
+func (s *Server) getRiskById(c *gin.Context) {
 	id := c.Param("id")
 	riskUUID, err := uuid.Parse(id)
 	if err != nil {
 		log.Println("received invalid risk id", err)
 		c.JSON(http.StatusBadRequest,
-			ErrorResponse{"invalid risk id supplied"})
+			ErrorResponse{"supplied risk id should be a valid uuid", err.Error()})
 		return
 	}
 
 	risk, err := s.database.GetRiskById(riskUUID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,
-			ErrorResponse{"failed to get risk due to internal server error"})
+		log.Println("failed to get risk with error", err)
+		c.JSON(http.StatusNotFound,
+			ErrorResponse{"risk not found", err.Error()})
 		return
 	}
 

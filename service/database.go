@@ -23,11 +23,11 @@ type InMemoryDatabase struct {
 	risks []Risk
 }
 
-func (d InMemoryDatabase) GetRisks() ([]Risk, error) {
+func (d *InMemoryDatabase) GetRisks() ([]Risk, error) {
 	return d.risks, nil
 }
 
-func (d InMemoryDatabase) GetRiskById(id uuid.UUID) (Risk, error) {
+func (d *InMemoryDatabase) GetRiskById(id uuid.UUID) (Risk, error) {
 	for _, risk := range d.risks {
 		if risk.Id == id {
 			return risk, nil
@@ -36,13 +36,13 @@ func (d InMemoryDatabase) GetRiskById(id uuid.UUID) (Risk, error) {
 	return Risk{}, errors.New(fmt.Sprintf("risk with id %s not found in db", id.String()))
 }
 
-func (d InMemoryDatabase) AddRisk(risk Risk) (Risk, error) {
+func (d *InMemoryDatabase) AddRisk(risk Risk) (Risk, error) {
 	risk.Id = uuid.Must(uuid.NewV6())
 	d.risks = append(d.risks, risk)
 	return risk, nil
 }
 
-func NewDatabase() Database {
+func newInMemoryDataBase() *InMemoryDatabase {
 	db := InMemoryDatabase{}
 	// Initialize db with some predefined risks
 	db.risks = []Risk{
@@ -50,5 +50,9 @@ func NewDatabase() Database {
 		{Id: uuid.Must(uuid.NewV6()), Title: "Risk2", Description: "Description2", State: "closed"},
 		{Id: uuid.Must(uuid.NewV6()), Title: "Risk3", Description: "Description3", State: "accepted"},
 	}
-	return db
+	return &db
+}
+
+func NewDatabase() Database {
+	return newInMemoryDataBase()
 }
