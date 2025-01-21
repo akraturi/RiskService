@@ -8,7 +8,7 @@ import (
 func main() {
 	s := server.NewServer()
 	if s == nil {
-		log.Fatalln("Failed to create server")
+		log.Fatalln("failed to create server")
 		return
 	}
 	err := s.Run()
