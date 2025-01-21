@@ -6,7 +6,7 @@ This API allows you to manage risks by performing CRUD operations (Create, Read,
 
 ### Base URL
 ```
-http://localhost:8080/v1/risks
+http://localhost:8080
 ```
 
 ---
