@@ -17,7 +17,7 @@ Before running the service, ensure that you have the following installed:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://https://github.com/akraturi/RiskService.git
+git clone https://github.com/akraturi/RiskService.git
 cd RiskService
 ```
 
