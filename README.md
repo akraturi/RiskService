@@ -9,6 +9,7 @@ Before running the service, ensure that you have the following installed:
 
 - [Go](https://golang.org/doc/install) (version 1.23 or higher)
 - [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/products/docker-desktop) (optional for containerized setup)
 
 ## Getting Started
 
@@ -55,7 +56,21 @@ nohup ./riskservice &
 
 This starts the service on http://localhost:8080
 
-### 5. Test the Service
+### 5. Running with Docker (Optional)
+If you want to run the service using Docker, you can use the provided Dockerfile.
+
+Build the Docker image:
+
+```bash
+docker build -t riskservice .
+```
+Run the container:
+
+```bash
+docker run -p 8080:8080 riskservice
+```
+
+### 6. Test the Service
 
 In Memory database is pre populated with some sample risks
 
