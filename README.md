@@ -30,6 +30,9 @@ The service has external dependencies on third party packages, which can be inst
 go mod tidy
 ```
 
+Consider building via docker and running the service in case you are working with a different version
+of go and do not want to modify your local env
+
 ### 3. Build the Service
 
 To build the service, run the following command:
@@ -85,5 +88,7 @@ Refer to [API Doc](API-Doc.md) to check the full usage of the APIs
 If you encounter any issues, ensure that:
 
 - Go is properly installed and configured.
+- If `go mod tidy` fails, consider building via docker and running the service in case you are working with a different version
+  of go and do not want to modify your local env
 - Port 8080 is available
 - All dependencies are installed using `go mod tidy`.

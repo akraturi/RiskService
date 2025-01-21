@@ -25,3 +25,4 @@
 - Future enhancements
   - Add pagination to GET `v1/risks` API
   - Add rate limiting
+  - Add integration tests
