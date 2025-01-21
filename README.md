@@ -63,6 +63,8 @@ In Memory database is pre populated with some sample risks
 curl http://localhost:8080/v1/risks
 ```
 
+Refer to [API Doc](API-Doc.md) to check the full usage of the APIs
+
 ## Troubleshooting
 
 If you encounter any issues, ensure that:
